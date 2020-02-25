@@ -22,7 +22,7 @@
 
 
 <script>
-import AppChartLegend from '@/components/AppChartLegend.vue';
+import AppChartLegend from '@/components/v1/AppChartLegend.vue';
 
 export default {
   name: 'AppChartPie',

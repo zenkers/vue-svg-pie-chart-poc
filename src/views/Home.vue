@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import AppChartPie from '@/components/AppChartPie.vue';
+import AppChartPie from '@/components/v1/AppChartPie.vue';
 
 export default {
   name: 'Home',
