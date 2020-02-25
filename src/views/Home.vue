@@ -3,7 +3,7 @@
     <button
       class="home__add-item-button"
       @click="addItem">Add item</button>
-    <AppChartPie :slices="sliceData" />
+    <AppChartPie :list="sliceData" />
   </div>
 </template>
 

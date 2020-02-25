@@ -1,20 +1,23 @@
 <template>
   <ul class="chart-legend">
     <li
-      v-for="slice in slices"
-      :key="slice.id"
+      v-for="item in list"
+      :key="item.id"
       class="chart-legend__item">
       <div
         class="chart-legend__item-color"
         :style="{
-          backgroundColor: slice.color,
+          backgroundColor: item.color,
         }"></div>
-      {{ slice.name }}
+      {{ item.name }}
+      <template v-if="item.percent">
+        ({{ (item.percent * 100).toFixed(2) }}%)
+      </template>
       <input
         type="checkbox"
-        :id="`checkbox-${slice.id}`"
-        v-model="slice.checked"
-        @change="handleChange(slice)">
+        :id="`checkbox-${item.id}`"
+        v-model="item.checked"
+        @change="handleChange(item)">
     </li>
   </ul>
 </template>
@@ -23,15 +26,15 @@
 export default {
   name: 'AppChartLegend',
   props: {
-    slices: {
+    list: {
       type: Array,
       required: true,
       default: () => [],
     },
   },
   methods: {
-    handleChange(slice) {
-      this.$emit('checkedEvent', slice);
+    handleChange(item) {
+      this.$emit('checkedEvent', item);
     },
   },
 };
@@ -40,23 +43,26 @@ export default {
 <style lang="scss">
 .chart-legend {
   width: 100%;
+  padding: 0;
+  display: grid;
+  grid-gap: 6px;
+  grid-template-columns: repeat(3, 1fr);
   list-style: none;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+
 
   &__item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 6px;
+    padding: 6px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 6px;
+    background-color: #eee;
+    border: 1px solid #cecece;
   }
 
   &__item-color {
     display: inline-block;
     width: 24px;
     height: 24px;
-    margin-right: 6px;
     border: 1px solid #000;
   }
 }

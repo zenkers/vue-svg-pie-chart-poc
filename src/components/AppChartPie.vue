@@ -3,28 +3,26 @@
     <svg
       viewBox="-1 -1 2 2"
       class="chart-pie__chart">
-      <path
-        v-for="slice in renderedSlices"
-        :key="slice.id"
-        :fill="slice.color"
-        :d="slice.d" />
+      <template v-for="item in listRendered">
+        <path
+          v-if="item.checked"
+          :key="item.id"
+          :fill="item.color"
+          :d="item.d" />
+      </template>
     </svg>
 
-    <div v-if="showLegend" class="chart-pie__legend">
+    <div class="chart-pie__legend">
       <AppChartLegend
-        :slices="sliceList"
+        :list="listCalculated"
         @checkedEvent="handleCheckedEvent" />
     </div>
   </div>
 </template>
 
+
 <script>
 import AppChartLegend from '@/components/AppChartLegend.vue';
-
-/**
- * Logic heavily influenced by the following article:
- * https://medium.com/hackernoon/a-simple-pie-chart-in-svg-dbdd653b6936
- */
 
 export default {
   name: 'AppChartPie',
@@ -32,12 +30,7 @@ export default {
     AppChartLegend,
   },
   props: {
-    showLegend: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-    slices: {
+    list: {
       type: Array,
       required: true,
       default: () => [],
@@ -45,45 +38,54 @@ export default {
   },
   data() {
     return {
-      sliceList: [],
+      listActive: this.list.map((item) => ({ ...item, checked: true })),
     };
   },
   watch: {
-    slices() {
-      this.sliceList = this.slices.map((slice) => ({ ...slice, checked: true }));
+    list() {
+      this.listActive = this.list.map((item) => ({ ...item, checked: true }));
     },
   },
   computed: {
-    renderedSlices() {
+    /**
+     * Adds { percent, d } to items that ARE CHECKED (for svg rendering)
+     * Adds { percent: null } to items that are unchecked (to overwrite if set prior)
+     * Returns a list of items with properties required for graph and legend templates
+     */
+    listCalculated() {
       let cumulativePercent = 0;
-      const sumCount = this.checkedSlices.reduce((sum, slice) => sum + slice.count, 0);
-      const formatted = [];
+      const newList = [];
 
-      this.checkedSlices.forEach((slice) => {
-        const [startX, startY] = this.getCoordinatesForPercent(cumulativePercent);
-        const percent = slice.count / sumCount;
-        const largeArcFlag = percent > 0.5 ? 1 : 0;
+      // Sum of the count property for checked items
+      const sumCheckedItemCount = this.listActive.reduce((sum, item) => {
+        if (item.checked) return sum + item.count;
+        return sum;
+      }, 0);
 
-        cumulativePercent += percent;
+      this.listActive.forEach((item) => {
+        if (item.checked) {
+          // Math from: https://medium.com/hackernoon/a-simple-pie-chart-in-svg-dbdd653b6936
+          const [startX, startY] = this.getCoordinatesForPercent(cumulativePercent);
+          const percent = item.count / sumCheckedItemCount;
+          const largeArcFlag = percent > 0.5 ? 1 : 0;
+          cumulativePercent += percent;
+          const [endX, endY] = this.getCoordinatesForPercent(cumulativePercent);
 
-        const [endX, endY] = this.getCoordinatesForPercent(cumulativePercent);
-
-        formatted.push({
-          ...slice,
-          percent,
-          d: this.formatDrawnPath(startX, startY, largeArcFlag, endX, endY),
-        });
+          newList.push({
+            ...item,
+            percent,
+            d: this.formatDrawnPath(startX, startY, largeArcFlag, endX, endY),
+          });
+        } else {
+          newList.push({ ...item, percent: null }); // set percent to overwrite
+        }
       });
 
-      return formatted;
+      return newList;
     },
-    checkedSlices() {
-      return this.sliceList.filter((slice) => slice.checked);
+    listRendered() {
+      return this.listCalculated.filter((item) => item.checked);
     },
-  },
-  created() {
-    // Set initial list, and attach checked
-    this.sliceList = this.slices.map((slice) => ({ ...slice, checked: true }));
   },
   methods: {
     formatDrawnPath(startX, startY, largeArcFlag, endX, endY) {
@@ -99,8 +101,9 @@ export default {
       return [x, y];
     },
     handleCheckedEvent(data) {
-      const index = this.sliceList.findIndex((item) => item.id === data.id);
-      if (index !== -1) this.sliceList[index] = data;
+      const index = this.listActive.findIndex((item) => item.id === data.id);
+      if (index !== -1) this.listActive.splice(index, 1); // Remove item...
+      this.listActive.splice(index, 0, data); // then re-insert to trigger re-render of template
     },
   },
 };
@@ -117,10 +120,6 @@ export default {
     height: 400px;
     width: 400px;
     transform: rotate(-90deg)
-  }
-
-  &__legend {
-    max-width: 360px;
   }
 }
 </style>
