@@ -102,8 +102,10 @@ export default {
     },
     handleCheckedEvent(data) {
       const index = this.listActive.findIndex((item) => item.id === data.id);
-      if (index !== -1) this.listActive.splice(index, 1); // Remove item...
-      this.listActive.splice(index, 0, data); // then re-insert to trigger re-render of template
+      if (index !== -1) {
+        this.listActive.splice(index, 1); // Remove item...
+        this.listActive.splice(index, 0, data); // re-insert for re-render
+      }
     },
   },
 };
