@@ -4,14 +4,16 @@
       viewBox="-1 -1 2 2"
       class="chart-pie__chart">
       <path
-        v-for="slice in formattedSlices"
+        v-for="slice in renderedSlices"
         :key="slice.id"
         :fill="slice.color"
         :d="slice.d" />
     </svg>
 
     <div v-if="showLegend" class="chart-pie__legend">
-      <AppChartLegend :slices="formattedSlices" />
+      <AppChartLegend
+        :slices="sliceList"
+        @checkedEvent="handleCheckedEvent" />
     </div>
   </div>
 </template>
@@ -41,13 +43,23 @@ export default {
       default: () => [],
     },
   },
+  data() {
+    return {
+      sliceList: [],
+    };
+  },
+  watch: {
+    slices() {
+      this.sliceList = this.slices.map((slice) => ({ ...slice, checked: true }));
+    },
+  },
   computed: {
-    formattedSlices() {
+    renderedSlices() {
       let cumulativePercent = 0;
-      const sumCount = this.slices.reduce((sum, slice) => sum + slice.count, 0);
+      const sumCount = this.checkedSlices.reduce((sum, slice) => sum + slice.count, 0);
       const formatted = [];
 
-      this.slices.forEach((slice) => {
+      this.checkedSlices.forEach((slice) => {
         const [startX, startY] = this.getCoordinatesForPercent(cumulativePercent);
         const percent = slice.count / sumCount;
         const largeArcFlag = percent > 0.5 ? 1 : 0;
@@ -65,6 +77,13 @@ export default {
 
       return formatted;
     },
+    checkedSlices() {
+      return this.sliceList.filter((slice) => slice.checked);
+    },
+  },
+  created() {
+    // Set initial list, and attach checked
+    this.sliceList = this.slices.map((slice) => ({ ...slice, checked: true }));
   },
   methods: {
     formatDrawnPath(startX, startY, largeArcFlag, endX, endY) {
@@ -78,6 +97,10 @@ export default {
       const x = Math.cos(2 * Math.PI * percent);
       const y = Math.sin(2 * Math.PI * percent);
       return [x, y];
+    },
+    handleCheckedEvent(data) {
+      const index = this.sliceList.findIndex((item) => item.id === data.id);
+      if (index !== -1) this.sliceList[index] = data;
     },
   },
 };

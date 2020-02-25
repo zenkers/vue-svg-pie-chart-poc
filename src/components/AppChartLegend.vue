@@ -9,7 +9,12 @@
         :style="{
           backgroundColor: slice.color,
         }"></div>
-      {{ slice.name }} ({{ (slice.percent * 100).toFixed(2) }}%)
+      {{ slice.name }}
+      <input
+        type="checkbox"
+        :id="`checkbox-${slice.id}`"
+        v-model="slice.checked"
+        @change="handleChange(slice)">
     </li>
   </ul>
 </template>
@@ -22,6 +27,11 @@ export default {
       type: Array,
       required: true,
       default: () => [],
+    },
+  },
+  methods: {
+    handleChange(slice) {
+      this.$emit('checkedEvent', slice);
     },
   },
 };
