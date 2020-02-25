@@ -55,8 +55,8 @@ export default {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 6px;
-    background-color: #eee;
-    border: 1px solid #cecece;
+    background-color: #585858;
+    border: 1px solid #777;
   }
 
   &__item-color {
