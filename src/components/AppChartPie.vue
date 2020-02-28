@@ -8,12 +8,11 @@
       class="app-chart-pie__svg">
       <template v-for="item in list">
         <path
-          v-if="item.checked"
           :key="item.id"
           :fill="item.color"
           :d="item.d"
           class="app-chart-pie__path">
-          </path>
+        </path>
       </template>
     </svg>
   </div>
@@ -36,3 +35,23 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.app-chart-pie {
+  h2 {
+    margin: 0px;
+  }
+
+  &__svg {
+    overflow: visible;
+  }
+
+  &__path {
+    transition: all .33s cubic-bezier(.33,.67,.47,1.18);
+
+    &:hover {
+      transform: scale(1.15);
+    }
+  }
+}
+</style>
