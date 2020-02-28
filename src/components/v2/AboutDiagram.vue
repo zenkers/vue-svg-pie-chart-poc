@@ -13,8 +13,8 @@
 </template>
 
 <script>
-import AppChartLegend from '@/components/AppChartLegend.vue';
-import AppChartPie from '@/components/AppChartPie.vue';
+import AppChartLegend from '@/components/v2/AppChartLegend.vue';
+import AppChartPie from '@/components/v2/AppChartPie.vue';
 
 export default {
   name: 'AboutDiagram',
@@ -133,19 +133,18 @@ export default {
 </script>
 
 <style lang="scss">
-  .about-diagram {
-    margin: 0 auto;
-    max-width: 800px;
-    display: flex;
-    flex-direction: row;
+.about-diagram {
+  margin: 0 auto;
+  max-width: 400px;
+  display: flex;
+  flex-direction: row;
 
-    &__charts {
-      margin-right: 32px;
-      flex-grow: 1;
-      display: grid;
-      grid-gap: 32px;
-      grid-template-columns: repeat(2, 1fr);
-    }
-
+  &__charts {
+    margin-right: 12px;
+    flex-grow: 1;
+    display: grid;
+    grid-gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
   }
+}
 </style>

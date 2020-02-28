@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import AboutDiagram from '@/components/AboutDiagram.vue';
+import AboutDiagram from '@/components/v2/AboutDiagram.vue';
 
 export default {
   name: 'About',
