@@ -46,7 +46,11 @@ export default {
 
 
   &__item {
-    padding: 6px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px;
     background-color: #585858;
     border: 1px solid #777;
   }

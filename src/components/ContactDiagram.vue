@@ -146,10 +146,10 @@ export default {
   flex-direction: row;
 
   &__charts {
-    margin-right: 12px;
+    margin-right: 16px;
     flex-grow: 1;
     display: grid;
-    grid-gap: 12px;
+    grid-gap: 16px;
     grid-template-columns: repeat(2, 1fr);
   }
 }

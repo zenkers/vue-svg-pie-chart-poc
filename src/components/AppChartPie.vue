@@ -7,12 +7,18 @@
       viewBox="-1 -1 2 2"
       class="app-chart-pie__svg">
       <template v-for="item in list">
-        <path
-          :key="item.id"
-          :fill="item.color"
-          :d="item.d"
-          class="app-chart-pie__path">
-        </path>
+        <g :key="item.id" class="app-chart-pie__group">
+          <path
+            :fill="item.color"
+            :d="item.d"
+            class="app-chart-pie__shadow">
+          </path>
+          <path
+            :fill="item.color"
+            :d="item.d"
+            class="app-chart-pie__path">
+          </path>
+        </g>
       </template>
     </svg>
   </div>
@@ -39,19 +45,31 @@ export default {
 <style lang="scss">
 .app-chart-pie {
   h2 {
-    margin: 0px;
+    margin: 6px 0;
   }
 
   &__svg {
     overflow: visible;
   }
 
+  &__group {
+    &:hover > .app-chart-pie__path {
+      transform: scale(1.1);
+    }
+
+    &:hover > .app-chart-pie__shadow {
+      transform: scale(1.175);
+    }
+  }
+
   &__path {
     transition: all .33s cubic-bezier(.33,.67,.47,1.18);
+  }
 
-    &:hover {
-      transform: scale(1.15);
-    }
+  &__shadow {
+    opacity: 0.5;
+    transform: scale(.80);
+    transition: all .37s cubic-bezier(.33,.67,.47,1.18);
   }
 }
 </style>
