@@ -1,14 +1,12 @@
 <template>
   <div id="app">
-    <div id="nav">
+    <!-- <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link> |
-      <router-link to="/contact">Contact</router-link>
-    </div>
+    </div> -->
     <transition name="fade" mode="out-in">
       <router-view/>
     </transition>
-    <svg>
+    <svg style="height: 0;">
       <defs>
         <filter id="fe-dropshadow" x="-2" y="-2" width="100" height="100">
           <feDropShadow  dx="0" dy="0" stdDeviation="1.5" />

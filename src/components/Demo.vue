@@ -1,10 +1,12 @@
 <template>
-  <div class="contact-diagram">
-    <div class="contact-diagram__charts">
-      <AppChartPie :list="listCount1" title="Count 1" />
-      <AppChartPie :list="listCount2" title="Count 2" />
-      <AppChartPie :list="listCount3" title="Count 3" />
-      <AppChartPie :list="listCount4" title="Count 4" />
+  <div class="demo-diagram">
+    <div class="demo-diagram__charts">
+      <template v-for="(list, index) in renderLists">
+        <AppChartPie
+          :key="index"
+          :list="list"
+          :title="`Count ${index + 1}`" />
+      </template>
     </div>
     <AppChartLegend
       :list="listActive"
@@ -17,7 +19,7 @@ import AppChartLegend from '@/components/AppChartLegend.vue';
 import AppChartPie from '@/components/AppChartPie.vue';
 
 export default {
-  name: 'ContactDiagram',
+  name: 'Demo',
   components: {
     AppChartLegend,
     AppChartPie,
@@ -32,10 +34,7 @@ export default {
   data() {
     return {
       listActive: [],
-      listCount1: [],
-      listCount2: [],
-      listCount3: [],
-      listCount4: [],
+      renderLists: [],
     };
   },
   watch: {
@@ -58,28 +57,20 @@ export default {
       }, 0);
 
       list.forEach((item) => {
-        if (item.checked) {
-          // Math from: https://medium.com/hackernoon/a-simple-pie-chart-in-svg-dbdd653b6936
-          const [startX, startY] = this.getCoordinatesForPercent(cumulativePercent);
-          const percent = item.count / sumCheckedItemCount;
-          const largeArcFlag = percent > 0.5 ? 1 : 0;
-          cumulativePercent += percent;
-          const [endX, endY] = this.getCoordinatesForPercent(cumulativePercent);
+        // Originated from: https://medium.com/hackernoon/a-simple-pie-chart-in-svg-dbdd653b6936
+        const [startX, startY] = this.getCoordinatesForPercent(cumulativePercent);
+        const percent = item.checked ? (item.count / sumCheckedItemCount) : 0;
+        const largeArcFlag = percent > 0.5 ? 1 : 0;
+        cumulativePercent += percent;
+        const [endX, endY] = item.checked
+          ? this.getCoordinatesForPercent(cumulativePercent)
+          : [startX, startY];
 
-          newList.push({
-            ...item,
-            percent,
-            d: this.formatDrawnPath(startX, startY, largeArcFlag, endX, endY),
-          });
-        } else {
-          const [x, y] = this.getCoordinatesForPercent(cumulativePercent);
-
-          newList.push({
-            ...item,
-            percent: 0,
-            d: this.formatDrawnPath(x, y, 0, x, y),
-          });
-        }
+        newList.push({
+          ...item,
+          percent,
+          d: this.formatDrawnPath(startX, startY, largeArcFlag, endX, endY),
+        });
       });
 
       return newList;
@@ -100,9 +91,10 @@ export default {
         count: item[propertyName],
       }));
     },
-    // Function partially from: https://css-tricks.com/snippets/javascript/random-hex-color/
     generateRandomColor() {
+      // https://css-tricks.com/snippets/javascript/random-hex-color/
       let color = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+      // Ensures full hex (above snippet inconsistent)
       while (color.length < 7) {
         color = color.concat('', (Math.random() * 10).toFixed(0));
       }
@@ -129,17 +121,18 @@ export default {
       this.initializeListCount();
     },
     initializeListCount() {
-      this.listCount1 = this.calcListPercent(this.formatList('count1'));
-      this.listCount2 = this.calcListPercent(this.formatList('count2'));
-      this.listCount3 = this.calcListPercent(this.formatList('count3'));
-      this.listCount4 = this.calcListPercent(this.formatList('count4'));
+      this.renderLists = [];
+      this.renderLists.push(this.calcListPercent(this.formatList('count1')));
+      this.renderLists.push(this.calcListPercent(this.formatList('count2')));
+      this.renderLists.push(this.calcListPercent(this.formatList('count3')));
+      this.renderLists.push(this.calcListPercent(this.formatList('count4')));
     },
   },
 };
 </script>
 
 <style lang="scss">
-.contact-diagram {
+.demo-diagram {
   margin: 0 auto;
   max-width: 400px;
   display: flex;
