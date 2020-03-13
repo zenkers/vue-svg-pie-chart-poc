@@ -8,6 +8,13 @@
     <transition name="fade" mode="out-in">
       <router-view/>
     </transition>
+    <svg>
+      <defs>
+        <filter id="fe-dropshadow" x="-2" y="-2" width="100" height="100">
+          <feDropShadow  dx="0" dy="0" stdDeviation="1.5" />
+        </filter>
+      </defs>
+    </svg>
   </div>
 </template>
 
