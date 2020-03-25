@@ -10,6 +10,7 @@
     </div>
     <AppChartLegend
       :list="listActive"
+      :disable-checkbox="countCheckedItems <= 3"
       @checkEvent="handleCheckEvent" />
   </div>
 </template>
@@ -36,6 +37,14 @@ export default {
       listActive: [],
       renderLists: [],
     };
+  },
+  computed: {
+    countCheckedItems() {
+      return this.listActive.reduce((count, item) => {
+        if (item.checked) return count + 1;
+        return count;
+      }, 0);
+    },
   },
   watch: {
     list() {

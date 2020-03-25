@@ -12,6 +12,7 @@
       {{ item.name }}
       <input
         type="checkbox"
+        :disabled="disableCheckbox && item.checked"
         :id="`checkbox-${item.id}`"
         v-model="item.checked"
         @change="handleChange(item)">
@@ -23,6 +24,11 @@
 export default {
   name: 'AppChartLegend',
   props: {
+    disableCheckbox: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
     list: {
       type: Array,
       required: true,
